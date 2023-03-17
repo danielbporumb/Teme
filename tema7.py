@@ -57,16 +57,16 @@ class Patrat(FormaGeometrica):
 
 #  ENCAPSULATION / INCAPSULARE
 
-    def latura_get(self):
+    def get_latura(self):
         return self.__latura
 
-    def latura_set(self, latura):
+    def set_latura(self, latura):
         if latura <= 0:
             print("Latura nu poate fi negativa")
         else:
             self.__latura = latura
 
-    def latura_delete(self):
+    def delete_latura(self):
         self.__latura = None
 
     def aria(self):
@@ -78,16 +78,16 @@ class Cerc(FormaGeometrica):
     def __init__(self, raza):
         self.__raza = raza
 
-    def raza_get(self):
+    def get_raza(self):
         return self.__raza
 
-    def raza_set(self, raza):
+    def set_raza(self, raza):
         if raza <= 0:
             print("Raza nu poate fi negativa")
         else:
             self.__raza = raza
 
-    def raza_delete(self):
+    def delete_raza(self):
         self.__raza = None
 
     def aria(self):
