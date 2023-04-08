@@ -1,4 +1,4 @@
-from tema7 import *
+from tema07 import *
 
 patrat = Patrat()
 patrat.descrie()
