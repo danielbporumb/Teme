@@ -164,15 +164,22 @@ class Login(TestCase):
         self.assertTrue(expected_message in actual_message, "Mesajul de eroare nu este corect")
 
 # TEST 8 - Lasă goale user și pass;- Click login; - Apasă x la eroare;- Verifică dacă eroarea a dispărut
+    def wait_for_element_to_disappear(self, element, timp):
+        wait = WebDriverWait(self.driver, timp)
+        return wait.until(EC.none_of(EC.presence_of_element_located(element))) # cu EC.none_of() se neaga conditia din EC
+
+    def is_element_present(self, locator):
+        return len(self.driver.find_elements(*locator)) > 0 # daca nu gaseste nimic, returneaza o lista goala
 
     def test_eroare_disparuta(self):
         print(f"A inceput testul {self._testMethodName}")
         self.logare()
         self.driver.find_element(By.CLASS_NAME, "close").click()
-        eroare = self.driver.find_element(By.ID, "flash")
-        self.assertTrue(eroare.is_displayed()), "Mesajul de eroare nu a disparut"
-        # pica testul daca eroarea este inca afisata;
-        # daca nu faceam maximize window, dadea eroare, se suprapunea butonul 'x' cu link-ul catre GitHub
+        self.wait_for_element_to_disappear((By.ID, "flash"), 3)
+        # self.assertFalse(self.is_element_present((By.ID, "flash")), "Mesajul de eroare nu a disparut")
+        self.assertTrue(not self.is_element_present((By.ID, "flash")), "Mesajul de eroare nu a disparut")
+
+
 
 # TEST 9 - Ia ca o listă toate //label; - Verifică textul ca textul de pe ele să fie cel așteptat (Username și Password)
 # - Aici e ok să avem 2 asserturi
