@@ -14,8 +14,9 @@ from selenium.webdriver import ActionChains
 from selenium.webdriver.common.by import By
 from selenium.webdriver.firefox.service import Service
 from selenium.webdriver.support.select import Select
+from selenium.webdriver.support.wait import WebDriverWait
 from webdriver_manager.firefox import GeckoDriverManager
-
+from selenium.webdriver.support import expected_conditions as EC
 
 
 class testing(TestCase):
@@ -26,6 +27,7 @@ class testing(TestCase):
     DROPDWON_LIST = (By.ID, "flight_type")
     PLECARE = (By.ID, "autocomplete")
     DESTINATIE = (By.ID, "autocomplete2")
+    FLIGHTS_TAB = (By.ID, "flights-tab")
 
     def setUp(self):
         self.service = Service(GeckoDriverManager().install())
@@ -49,7 +51,10 @@ class testing(TestCase):
         self.assertEqual(expected_title, actual_title, "Titlul nu coincide")
 
     def test_empty_search(self):
+        self.driver.find_element(*self.FLIGHTS_TAB).click()
+        time.sleep(1)
         self.driver.find_element(*self.BUTTON_SEARCH).click()
+        time.sleep(1)
         alert = self.driver.switch_to.alert
         alert.accept()
         round_trip = self.driver.find_element(*self.ROUND_TRIP)
@@ -57,6 +62,8 @@ class testing(TestCase):
         self.assertTrue(round_trip.is_enabled() ,"Optiunea 'Round Trip' nu este selectata")
 
     def test_dropdown(self):
+        self.driver.find_element(*self.FLIGHTS_TAB).click()
+        time.sleep(1)
         options = self.driver.find_element(*self.DROPDWON_LIST)
         select = Select(options)
         select.select_by_visible_text("Business")
@@ -94,23 +101,75 @@ class TestSlider(TestCase):
 
         self.assertEqual(expected_value, actual_value.text, "Valorile nu corespund")
 
-# nu gasesc ce teste sa mai fac pe site-urile astea, astfel incat sa nu repet ce am facut la cursuri sau teme anterioare..
-# o sa mai completez ulterior cu ceva teste
 
-    # def test_drag_and_drop(self):
-    #     self.driver.find_element(By.LINK_TEXT, "Drag and Drop").click()
-    #     patrat_A =  self.driver.find_element(By.ID, "column-a")
-    #     text_A = patrat_A.text
-    #     print(f"\nTextul initial de pe primul patrat este '{text_A}'")
-    #     patrat_B =  self.driver.find_element(By.ID, "column-b")
-    #     text_B = patrat_B.text
-    #     print(f"Textul initial de pe al doilea patrat este '{text_B}'")
-    #     actions = ActionChains(self.driver)
-    #     actions.drag_and_drop(patrat_A, patrat_B).perform()
-    #     time.sleep(1)
-    #
-    #     self.assertEqual(text_A, "B", "Nu s-a facut 'drag and drop', textul nu e cel asteptat")
-    #     self.assertEqual(text_B, "A", "Nu s-a facut 'drag and drop', textul nu e cel asteptat")
+class DragAndDropTest(TestCase):
+    driver = None
+    LINK = "https://formy-project.herokuapp.com/"
+    OBJECT_TO_DRAG = (By.ID, "image")
+    LOCATION_TO_DROP = (By.ID, "box")
+
+    def setUp(self):
+        self.service = Service(GeckoDriverManager().install())
+        self.driver = webdriver.Firefox(service=self.service)
+        self.driver.get(self.LINK)
+        self.driver.maximize_window()
+        self.driver.implicitly_wait(2)
+
+    def tearDown(self):
+        self.driver.quit()
+
+    def test_drag_and_drop(self):
+        self.driver.find_element(By.PARTIAL_LINK_TEXT, "Drag").click()
+        time.sleep(1)
+        self.driver.refresh() # nu poti sa faci drag and drop decat dupa ce dai un refresh la pagina...
+        time.sleep(1)
+        action = ActionChains(self.driver)
+        element = self.driver.find_element(*self.OBJECT_TO_DRAG)
+        location_to_drop = self.driver.find_element(*self.LOCATION_TO_DROP)
+        action.drag_and_drop(element, location_to_drop).perform()
+        time.sleep(2)
+        expected_box_text = "Dropped!"
+        actual_box_text = self.driver.find_element(*self.LOCATION_TO_DROP).text
+
+        self.assertEqual(expected_box_text, actual_box_text, "The element was not dropped here")
 
 
-# m-am tot chinuit o vreme cu o astfel de metoda de test, insa nu functioneaza nicicum drag_and_drop.. am incercat prin n variante
+class Magazine(TestCase):
+    driver = None
+    LINK = "https://demo.nopcommerce.com/"
+    ELECTRONICS_TAB = (By.LINK_TEXT, "Electronics")
+    CELL_PHONES_TAB = (By.LINK_TEXT, "Cell phones")
+    HTC_ONE_WISHLIST_BUTTON = (By.XPATH, "//a[text()='HTC One Mini Blue']/following::button[text()='Add to wishlist'][1]")
+    # luam primul buton de wishlist de dupa link-text-ul HTC One Mini Blue
+    WISHLIST_MESSAGE = (By.CLASS_NAME, "success")
+
+    def setUp(self):
+        self.service = Service(GeckoDriverManager().install())
+        self.driver = webdriver.Firefox(service=self.service)
+        self.driver.get(self.LINK)
+        self.driver.maximize_window()
+        self.driver.implicitly_wait(2)
+
+    def tearDown(self):
+        self.driver.quit()
+
+    def test_wishlist(self):
+        electronics = self.driver.find_element(*self.ELECTRONICS_TAB)
+        action = ActionChains(self.driver)
+        action.move_to_element(electronics).perform()
+        time.sleep(1)
+        wait = WebDriverWait(self.driver, 5)
+        cell_phones = wait.until(EC.presence_of_element_located(self.CELL_PHONES_TAB))
+        cell_phones.click()
+        time.sleep(1)
+        self.driver.find_element(*self.HTC_ONE_WISHLIST_BUTTON).click()
+        time.sleep(3)
+        success_message = wait.until(EC.presence_of_element_located(self.WISHLIST_MESSAGE))
+        expected_wishlist_message = "The product has been added to your wishlist"
+        actual_wishlist_message = success_message.text
+
+        self.assertEqual(expected_wishlist_message, actual_wishlist_message, "The is not on your wishlist")
+
+
+
+

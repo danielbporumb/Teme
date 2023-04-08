@@ -7,12 +7,12 @@ intalnirea 10 (care au clasa). Generati raportul
 import unittest
 import HtmlTestRunner
 
-from Cursuri.curs10_test_01_alerts import TestAlerts
-from Cursuri.curs10_test_02_authentication import TestFirefoxAuthentication
-from Cursuri.curs10_test_03_context_menu import TestContextMenu
-from Cursuri.curs10_test_04_keys import TestKeys
-from Cursuri.curs10_test_05_dropdown import TestDropdown
-from Teme.tema9 import Login
+from Cursuri.Curs10.curs10_test_01_alerts import TestAlerts
+from Cursuri.Curs10.curs10_test_02_authentication import TestFirefoxAuthentication
+from Cursuri.Curs10.curs10_test_03_context_menu import TestContextMenu
+from Cursuri.Curs10.curs10_test_04_keys import TestKeys
+from Cursuri.Curs10.curs10_test_05_dropdown import TestDropdown
+from Teme.Tema09.tema09 import Login
 
 
 class TestSuiteTeme(unittest.TestCase):
