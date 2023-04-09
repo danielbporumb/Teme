@@ -175,7 +175,7 @@ class Login(TestCase):
         print(f"A inceput testul {self._testMethodName}")
         self.logare()
         self.driver.find_element(By.CLASS_NAME, "close").click()
-        self.wait_for_element_to_disappear((By.ID, "flash"), 3)
+        self.wait_for_element_to_disappear((By.ID, "flash"), 3) # pt ca nu dispare din prima, dureaza putin sa dispara dupa ce dai x
         # self.assertFalse(self.is_element_present((By.ID, "flash")), "Mesajul de eroare nu a disparut")
         self.assertTrue(not self.is_element_present((By.ID, "flash")), "Mesajul de eroare nu a disparut")
 
