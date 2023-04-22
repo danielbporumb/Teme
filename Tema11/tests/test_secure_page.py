@@ -20,17 +20,15 @@ class TestSecurePage(TestCase):
         self.driver.quit()
 
     def test_login_successful(self):
-        # login_page = LoginPage(self.driver) # pot sa fac atata cu login_page, cat si cu secure_page,
-        # deoarece secure_page mosteneste de la login_page
+        login_page = LoginPage(self.driver)
         secure_page = SecurePage(self.driver)
-        secure_page.navigate_to_home_page()
-        secure_page.navigate_to_login_page()
-        secure_page.username_type(self.CORRECT_USERNAME)
-        secure_page.password_type(self.CORRECT_PASSWORD)
-        secure_page.click_on_login_button()
+        login_page.navigate_to_login_page()
+        login_page.username_type(self.CORRECT_USERNAME)
+        login_page.password_type(self.CORRECT_PASSWORD)
+        login_page.click_on_login_button()
         # time.sleep(3)
 
-        self.assertTrue(secure_page.is_message_displayed(), "Error, message is not displayed")
+        self.assertTrue(secure_page.is_success_message_displayed(), "Error, message is not displayed")
         # print(f"\n{secure_page.get_success_message_text()}")
         self.assertIn(self.SUCCESS_LOGIN_MESSAGE, secure_page.get_success_message_text(), "Error, messages do not match")
 

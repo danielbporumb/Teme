@@ -1,8 +1,10 @@
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 
+from Teme.Tema11.pages.base_page import BasePage
 
-class HomePage:
+
+class HomePage(BasePage):
 
     HOME_PAGE_URL = "https://the-internet.herokuapp.com/"
     FORM_AUTHENTICATION_LINK = (By.LINK_TEXT, "Form Authentication")
@@ -11,16 +13,10 @@ class HomePage:
     CONTEXT_MENU_LINK = (By.LINK_TEXT, "Context Menu")
 
     def __init__(self, driver: webdriver):
-        self.driver = driver
+        super().__init__(driver)
 
     def navigate_to_home_page(self):
         self.driver.get(self.HOME_PAGE_URL)
-
-    def find(self, locator):
-        return self.driver.find_element(*locator)
-
-    def click(self, locator):
-        return self.find(locator).click()
 
     def click_on_form_authentication(self):
         return self.click(self.FORM_AUTHENTICATION_LINK)
